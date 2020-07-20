@@ -35,9 +35,81 @@ virtualenv .env
 # Wait for it to setup
 .env\Scripts\activate # On Windows
 source .env\bin\activate # On Unix
+pip install -r requirements.txt 
+# IF USING A GPU TO FINETUNE/GENERATE
+pip install -r requirements-gpu.txt
 ```
 
+
+Download the models you need:
+
+```
+gpt-2-simple download MODELNAME
+```
+
+Models are: `124M`, `355M`, `774M`, `1.5B`
+
+**You will not be able to run anything more than the `355M` model on a gaming graphics card. Don't bother wasting the time to download the higher memory models unless you have a Titan or Quadro or something. If you are using Colab the `774M` can work sometimes. **
+
+
+### Creating a Dataset
+
+You should use a discord chat exporter like [this](https://github.com/Tyrrrz/DiscordChatExporter/releases/tag/2.20) and export it to txt. The format for my dataset was as follows:
+
+```
+name1:
+conversational message here
+maybe another one here
+
+name2:
+conversational reply here
+
+name1:
+reply
+
+name2:
+reply reply
+
+name3:
+blah blah blah
+```
+
+Obviously it had real contextual conversation going on but this is the format it was in.
 
 ## Finetuning the model
 
 If you are running the finetuning on a CPU I recommend using the smaller `124M` model. If you have a beefy GPU like an RTX card or a high level GTX/RX card you can probably try the `355M` model.
+
+Below is code to finetune a model basically:
+
+```python
+import gpt_2_simple as gpt2
+from datetime import datetime
+
+
+file_name = "dataset.txt" # File name of dataset
+
+sess = gpt2.start_tf_sess()
+
+gpt2.finetune(
+            sess,
+            dataset=file_name,
+            model_name='355M', # Model you have already downloaded
+            steps=-1, # -1 will do unlimited. Enter number of iterations otherwise
+            restore_from='latest', # Also allows 'fresh' which will overwrite old training
+            run_name='discord', # The name to pull or create a checkpoint under
+            print_every=50, # Print iterations every X numebr
+            sample_every=150, # Generate a text sample ever X number of iter.
+            save_every=500, # Save a snapshot every X number of iter.
+            learning_rate=0.0001, # Lower to 0.00001 if you are not getting massive changes in results
+            batch_size=1 # Keep at 1 or 2, will use up more memory if you raise this
+)
+```
+
+You can run this everytime and it will train your model and pick up from where it left off, or start a new one if you have a new `run_name`. 
+
+Finetune your model until it reaches around 8k-10k iterations.
+
+## The Discord Bot Part
+
+Create a discord bot on the discord site.

@@ -113,3 +113,9 @@ Finetune your model until it reaches around 8k-10k iterations.
 ## The Discord Bot Part
 
 Create a discord bot on the discord site.
+
+First you need to go to the [Applications Section](https://discord.com/developers/applications) of the developer panel. Inside you need to create a new app.
+
+<p align="center">
+  <img src="https://i.imgur.com/oiUA5hT.png">
+</p>

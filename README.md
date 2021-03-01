@@ -189,16 +189,16 @@ async def on_message(message):
                             for r in res_split:
                                 if not r.endswith(":") and len(r) > 2 and "http" not in r:
                                     ok.append(r)
-                            if len(ok) > 0:
-                                break
-                            for i, msg in enumerate(ok):
-                                if i == (len(ok) -1):
-                                    await asyncio.sleep(random.randint(0,1))
+                        if len(ok) > 0:
+                            break
+                        for i, msg in enumerate(ok):
+                            if i == (len(ok) -1):
+                                await asyncio.sleep(random.randint(0,1))
+                                await message.channel.send(msg)
+                            else:
+                                async with message.channel.typing():
                                     await message.channel.send(msg)
-                                else:
-                                    async with message.channel.typing():
-                                        await message.channel.send(msg)
-                                        await asyncio.sleep(random.randint(1, 3))                   
+                                    await asyncio.sleep(random.randint(1, 3))                   
             else:
                 return
 
